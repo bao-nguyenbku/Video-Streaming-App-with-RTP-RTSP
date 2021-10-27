@@ -34,7 +34,10 @@ class Client:
 
 	def __init__(self, master, serveraddr, serverport, rtpport, filename):
 		self.master = master
+		# Protocol for clearly close windows 
 		self.master.protocol("WM_DELETE_WINDOW", self.handler)
+		
+		# Create GUI windows
 		self.createWidgets()
 		self.serverAddr = serveraddr
 		self.serverPort = int(serverport)
@@ -154,7 +157,9 @@ class Client:
 
 	def connectToServer(self):
 		"""Connect to the Server. Start a new RTSP/TCP session."""
-	#TODO
+	#TODO---------------------------------------------------------
+		# AF_NET support only for ipv4
+		# SOCK_STREAM (TCP)
 		self.rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		try:
 			self.rtspSocket.connect((self.serverAddr, self.serverPort))

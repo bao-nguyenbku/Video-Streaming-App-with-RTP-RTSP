@@ -1,5 +1,6 @@
 import sys
 from time import time
+from typing import Sized
 HEADER_SIZE = 12
 
 class RtpPacket:	
@@ -19,28 +20,30 @@ class RtpPacket:
 		
 		# header[0] = ...
 		# ...
-		self.header[0] = (header[0] | version << 6)
-		self.header[0] = (header[0] | padding << 5)
-		self.header[0] = (header[0] | extension << 4)
-		self.header[0] = (header[0] | cc)
-		self.header[1] = (header[1] | marker << 7)
-		self.header[1] = (header[1] | pt)
+		# header[0] use 8 bits
+		header[0] = (header[0] | version << 6)
+		header[0] = (header[0] | padding << 5)
+		header[0] = (header[0] | extension << 4)
+		header[0] = (header[0] | cc)
 
-		self.header[2] = seqnum >> 8
-		self.header[3] = seqnum
+		header[1] = (header[1] | marker << 7)
+		header[1] = (header[1] | pt)
 
-		self.header[4] = (timestamp >> 24) & 0xFF
+		header[2] = (seqnum >> 8) & 0xFF
+		header[3] = seqnum & 0xFF
 
-		self.header[5] = (timestamp >> 16) & 0xFF
-		self.header[6] = (timestamp >> 8) & 0xFF
-		self.header[7] = (timestamp & 0xFF)
+		header[4] = (timestamp >> 24) & 0xFF
+		header[5] = (timestamp > 16) & 0xFF
+		header[6] = (timestamp >> 8) & 0xFF
+		header[7] = (timestamp & 0xFF)
 
-		self.header[8] = ssrc >> 24
-		self.header[9] = ssrc >> 16
-		self.header[10] = ssrc >> 8
-		self.header[11] = ssrc
+		header[8] = ssrc >> 24
+		header[9] = (ssrc >> 16) & 0xFF
+		header[10] = (ssrc >> 8) & 0xFF
+		header[11] = ssrc & 0xFF
 		# Get the payload from the argument
 		# self.payload = ...
+		self.header = header
 		self.payload = payload
 		
 	def decode(self, byteStream):
@@ -74,3 +77,6 @@ class RtpPacket:
 	def getPacket(self):
 		"""Return RTP packet."""
 		return self.header + self.payload
+	
+rtp = RtpPacket()
+rtp.encode(2,0,0,3,10,1,26,2,12)

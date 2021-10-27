@@ -14,6 +14,8 @@ class Server:
 		rtspSocket.listen(5)        
 
 		# Receive client info (address,port) through RTSP/TCP session
+		
+		# Nhiều port coi được. Nếu ko có while true thì chỉ có một client kết nối được server
 		while True:
 			clientInfo = {}
 			clientInfo['rtspSocket'] = rtspSocket.accept()
