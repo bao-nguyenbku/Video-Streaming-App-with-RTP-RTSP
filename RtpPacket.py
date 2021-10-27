@@ -77,6 +77,3 @@ class RtpPacket:
 	def getPacket(self):
 		"""Return RTP packet."""
 		return self.header + self.payload
-	
-rtp = RtpPacket()
-rtp.encode(2,0,0,3,10,1,26,2,12)
