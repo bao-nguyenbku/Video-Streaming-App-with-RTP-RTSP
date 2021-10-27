@@ -11,11 +11,12 @@ class Server:
 			print("[Usage: Server.py Server_port]\n")
 		rtspSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		rtspSocket.bind(('', SERVER_PORT))
-		rtspSocket.listen(5)        
+		# Số kết nối được phép
+		rtspSocket.listen()        
 
 		# Receive client info (address,port) through RTSP/TCP session
 		
-		# Nhiều port coi được. Nếu ko có while true thì chỉ có một client kết nối được server
+		# Nhiều client coi được. Nếu ko có while true thì chỉ có một client kết nối được server
 		while True:
 			clientInfo = {}
 			clientInfo['rtspSocket'] = rtspSocket.accept()
