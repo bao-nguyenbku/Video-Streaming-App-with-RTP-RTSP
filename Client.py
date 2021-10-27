@@ -120,7 +120,7 @@ class Client:
 					rtpPacket.decode(data)
 					
 					currFrameNbr = rtpPacket.seqNum()
-					print ("CURRENT SEQUENCE NUM: " + str(currFrameNbr))
+					print ("CURRENT FRAME NUM: " + str(currFrameNbr))
 										
 					if currFrameNbr > self.frameNbr: # Discard the late packet
 						self.frameNbr = currFrameNbr
