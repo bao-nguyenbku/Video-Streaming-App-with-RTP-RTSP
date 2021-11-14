@@ -29,6 +29,8 @@ class Client:
 	
 	RTSP_VER = "RTSP/1.0"
 	TRANSPORT = "RTP/UDP"
+	# TODO: Counter for calculating packet loss rate
+	counter = 0
 
 
 	def __init__(self, master, serveraddr, serverport, rtpport, filename):
@@ -89,6 +91,9 @@ class Client:
 	def exitClient(self):
 		"""Teardown button handler."""
 	#TODO
+		# TODO: Print out the rate of packet lossing 
+		rate = float(self.counter/self.frameNbr)
+		print("PACKET LOSS RATE : " + str(rate))
 		self.sendRtspRequest(self.TEARDOWN)		
 		self.master.destroy() # Close the gui window
 		os.remove(CACHE_FILE_NAME + str(self.sessionId) + CACHE_FILE_EXT)
@@ -98,15 +103,20 @@ class Client:
 	#TODO
 		if self.state == self.PLAYING:
 			self.sendRtspRequest(self.PAUSE)
+			# TODO: Uncomment this one line below to perform question 2 in extend 
+			# self.exitClient()
 	def playMovie(self):
 		"""Play button handler."""
 	#TODO
+		# if self.stat == self.INIT:
 		if self.state == self.READY:
 			# Create a new thread to listen for RTP packets
 			threading.Thread(target=self.listenRtp).start()
 			self.playEvent = threading.Event()
 			self.playEvent.clear()
 			self.sendRtspRequest(self.PLAY)
+			# TODO: Comment 4 lines above and uncomment this one line below to perform question 2 in extend 
+			# self.sendRtspRequest(self.SETUP)
 
 	def listenRtp(self):		
 		"""Listen for RTP packets."""
@@ -118,9 +128,22 @@ class Client:
 				if data:
 					rtpPacket = RtpPacket()
 					rtpPacket.decode(data)
-					
+					# TODO: Calculate packet loss 
+					# try:
+					# 	if self.frameNbr + 1 != rtpPacket.seqNum():
+					# 		self.counter += 1
+					# 		print("PACKET LOSS HERE !!!")
+					# 	# currFrameNbr = rtpPacket.seqNum()
+					# except:
+					# 	print("SeqNum() ERROR")
+					# 	print("---------------------------------")
+					# 	traceback.print_exc(file=sys.stdout)
+					# 	print("---------------------------------")
+					# TODO: End calculating
 					currFrameNbr = rtpPacket.seqNum()
 					print ("CURRENT FRAME NUM: " + str(currFrameNbr))
+					print("COUNTER : " + str(self.counter))
+					print("FRAMENUMBER : " + str(self.frameNbr))
 										
 					if currFrameNbr > self.frameNbr: # Discard the late packet
 						self.frameNbr = currFrameNbr
@@ -273,10 +296,19 @@ class Client:
                         
                         
 						# Update RTSP state.
+						# ! Used for normal app
 						self.state = self.READY
+						# ! Used for extend 2
+						# self.state = self.PLAYING
 						
 						# Open RTP port.
 						self.openRtpPort() 
+      
+      					# TODO: Play the video (extend 2)
+						# threading.Thread(target=self.listenRtp).start()
+						# self.playEvent = threading.Event()
+						# self.playEvent.clear()
+						# self.sendRtspRequest(self.PLAY)
 					elif self.requestSent == self.PLAY:
 						self.state = self.PLAYING
 					elif self.requestSent == self.PAUSE:
